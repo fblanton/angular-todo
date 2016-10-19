@@ -8,8 +8,15 @@
     <title>Angular Todo</title>
   </head>
   <body>
-    <div ng-controller="HomeController as c">
-      <h1>{{c.message}}</h1>
+    <div ng-controller="HomeController as home">
+      <span ng-show="home.remaining()"><h1>{{home.message}}</h1></span>
+      <span ng-show="!home.remaining()"><h1>{{home.complete}}</h1></span>
+      <ul>
+        <li ng-repeat="todo in home.todos">
+          <span ng-class="{strike: todo.completed}" ng-click="home.toggle(todo)">{{todo.task}}</span>
+        </li>
+      </ul>
+      <span ng-show="home.remaining()"><h3>{{home.remaining()}} remaining</h3></span>
     </div>
   </body>
 </html>
