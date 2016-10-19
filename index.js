@@ -1,7 +1,7 @@
 const express = require('express')
 const { MongoClient } = require('mongodb')
 
-const URI = 'mongodb://localhost:27017/todo-app'
+const URI = 'mongodb://localhost:27017/todos-app'
 const PORT = 7000
 
 MongoClient.connect(URI, (err, db) => {
