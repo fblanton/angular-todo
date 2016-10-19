@@ -1,3 +1,13 @@
 body {
-  font-family: fantasy;
+  font-size: 3em;
+  font-family: monospace;
+  text-align: center;
+}
+
+ul {
+  list-style: none;
+}
+
+.strike {
+  text-decoration: line-through;
 }
