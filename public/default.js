@@ -16,9 +16,6 @@ function HomeController() {
   ]
 
   function remaining() {
-    return vm.todos.reduce((current, next) =>
-      (!next.completed) ? current + 1 : current,
-      0
-    )
+    return vm.todos.filter(todo => !todo.completed).length
   }
 }
