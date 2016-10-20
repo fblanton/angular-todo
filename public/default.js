@@ -30,15 +30,18 @@ function HomeController($http, $timeout) {
       .then(({ data }) =>{
         if (!data) {
           todo.completed = !todo.completed
-          vm.error = 'Unable to Update Status on Server'
-          $timeout(() => vm.error = '', 2000)
+          showError('Unable to Update Status on Server')
         }}
       )
       .catch(() => {
-        vm.error = 'Unable to Update Status on Server'
-        $timeout(() => vm.error = '', 2000)
         todo.completed = !todo.completed
+        showError('Unable to Update Status on Server')
       })
+  }
+
+  function showError(text) {
+    vm.error = text
+    $timeout(() => vm.error = '', 2000)
   }
 
   function post() {
