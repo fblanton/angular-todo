@@ -3,9 +3,9 @@ const URL = 'http://localhost:7000/todos'
 
 todo.controller('HomeController', HomeController)
 
-todo.$inject = ['$http']
+todo.$inject = ['$http', '$timeout']
 
-function HomeController($http) {
+function HomeController($http, $timeout) {
   const vm = this
 
   vm.message = 'Get Doing It'
@@ -13,14 +13,32 @@ function HomeController($http) {
   vm.remaining = remaining
   vm.todos = []
   vm.newTodo = { completed: false, task: '' }
-  vm.toggle = todo => todo.completed = !todo.completed
+  vm.toggle = toggleTodo
   vm.post = post
+  vm.error = '';
 
   loadTodos()
 
   function loadTodos() {
     $http.get(URL)
       .success(res => vm.todos = res)
+  }
+
+  function toggleTodo(todo) {
+    todo.completed = !todo.completed
+    $http.put(URL + '/' + todo._id, { completed: todo.completed })
+      .then(({ data }) =>{
+        if (!data) {
+          todo.completed = !todo.completed
+          vm.error = 'Unable to Update Status on Server'
+          $timeout(() => vm.error = '', 2000)
+        }}
+      )
+      .catch(() => {
+        vm.error = 'Unable to Update Status on Server'
+        $timeout(() => vm.error = '', 2000)
+        todo.completed = !todo.completed
+      })
   }
 
   function post() {
