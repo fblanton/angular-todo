@@ -1,11 +1,13 @@
-const todo = angular.module('todo', [])
+
 const URL = 'http://localhost:7000/todos'
 
-todo.controller('HomeController', HomeController)
+angular
+  .module('todo', [])
+  .controller('HomeController', HomeController)
 
-todo.$inject = ['$http', '$timeout']
+HomeController.$inject = ['$timeout', 'dataservice']
 
-function HomeController($http, $timeout) {
+function HomeController($timeout, dataservice) {
   const vm = this
 
   vm.message = 'Get Doing It'
@@ -14,28 +16,22 @@ function HomeController($http, $timeout) {
   vm.todos = []
   vm.newTodo = { completed: false, task: '' }
   vm.toggle = toggleTodo
-  vm.post = post
+  vm.create = create
   vm.error = '';
 
   loadTodos()
 
   function loadTodos() {
-    $http.get(URL)
-      .success(res => vm.todos = res)
+    dataservice.readAll()
+      .then(todos => vm.todos = todos)
+      .catch(() => showError('Server Error: Unable to Load Todos.'))
   }
 
   function toggleTodo(todo) {
-    todo.completed = !todo.completed
-    $http.put(URL + '/' + todo._id, { completed: todo.completed })
-      .then(({ data }) =>{
-        if (!data) {
-          todo.completed = !todo.completed
-          showError('Unable to Update Status on Server')
-        }}
-      )
+    dataservice.updateOne(todo, { completed: !todo.completed })
+      .then(() => todo.completed = !todo.completed)
       .catch(() => {
-        todo.completed = !todo.completed
-        showError('Unable to Update Status on Server')
+        showError('Server Error: Unable to Toggle Todo.')
       })
   }
 
@@ -44,17 +40,41 @@ function HomeController($http, $timeout) {
     $timeout(() => vm.error = '', 2000)
   }
 
-  function post() {
-    $http.post(URL, vm.newTodo)
-      .success(res => {
-        vm.newTodo.task = ''
-        vm.todos.push(res)
-      })
+  function create(todo) {
+    dataservice.create(todo)
+      .then(res => vm.todos.push(res) && (vm.newTodo.task = ''))
+      .catch(() => showError('Server Error: Unable to Create Todo.'))
   }
 
   function remaining() {
     return (vm.todos)
       ? vm.todos.filter(todo => !todo.completed).length
       : null
+  }
+}
+
+angular
+  .module('todo')
+  .factory('dataservice', dataService)
+
+dataService.$inject = ['$http', '$timeout']
+
+function dataService($http, $timeout) {
+  return {
+    create,
+    readAll,
+    updateOne
+  }
+
+  function create(item) {
+    return $http.post(URL, item).then(res => res.data)
+  }
+
+  function readAll() {
+    return $http.get(URL).then(res => res.data)
+  }
+
+  function updateOne(item, update) {
+    return $http.put(URL + '/' + item._id, update).then(res => res.data)
   }
 }

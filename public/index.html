@@ -11,7 +11,7 @@
     <div ng-controller="HomeController as home">
       <span ng-show="home.remaining()"><h1>{{home.message}}</h1></span>
       <span ng-show="!home.remaining()"><h1>{{home.complete}}</h1></span>
-      <form ng-submit="home.post()">
+      <form ng-submit="home.create(home.newTodo)">
         <input type="text" ng-model="home.newTodo.task">
       </form>
       <span ng-show="!!home.error"><h5>{{home.error}}</h5></span>

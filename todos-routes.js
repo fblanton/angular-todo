@@ -28,8 +28,10 @@ module.exports = db => {
     const id = { _id: ObjectId(req.params.id) }
     todos
       .updateOne(id, { $set: req.body })
-      .then( () => todos.find(id).toArray()
-        .then(list => res.json(list[0]))
+      .then(() => todos.find(id).toArray()
+        .then(list => {
+          (list.length) ? res.json(list[0]) : res.sendStatus(500)
+        })
         .catch(next)
       )
       .catch(next)
