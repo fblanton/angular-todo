@@ -9,8 +9,7 @@ module.exports = db => {
   router.post('/', (req, res, next) => {
     if (!valid('CREATE', req.body)) return res.sendStatus(500)
 
-    let todo = Object.assign({}, req.body)
-    todo.completed = (todo.completed === 'false') ? false : true
+    let todo = parse(req.body)
     todos
       .insertOne(todo)
       .then(() => res.status(201).json(todo))
@@ -26,4 +25,11 @@ module.exports = db => {
   })
 
   return router
+}
+
+function parse(todo) {
+  todo = Object.assign({}, todo)
+  todo.completed = (todo.completed === 'false' || !todo.completed)
+    ? false : true
+  return todo
 }

@@ -4,7 +4,8 @@ module.exports = (action, input) => {
       const keys = Object.keys(input)
       return keys.length === 2 &&
              typeof input.completed !== 'undefined' &&
-             typeof input.task !== 'undefined'
+             typeof input.task !== 'undefined' &&
+             input.task !== ''
     default:
       return false
   }
