@@ -2,6 +2,7 @@ const express = require('express')
 const { MongoClient } = require('mongodb')
 const todosRoutes = require('./todos-routes')
 const errorRoute = require('./error-route')
+const jsonParser = require('body-parser').json()
 
 const URI = 'mongodb://localhost:27017/todos-app'
 const PORT = 7000
@@ -14,6 +15,7 @@ MongoClient.connect(URI, (err, db) => {
   }
   const app = express()
   app.use(express.static('./public'))
+  app.use(jsonParser)
   app.use('/todos', todosRoutes(db))
   app.use(errorRoute)
   app.listen(PORT)
