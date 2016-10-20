@@ -11,6 +11,9 @@
     <div ng-controller="HomeController as home">
       <span ng-show="home.remaining()"><h1>{{home.message}}</h1></span>
       <span ng-show="!home.remaining()"><h1>{{home.complete}}</h1></span>
+      <form ng-submit="home.post()">
+        <input type="text" ng-model="home.newTodo.task">
+      </form>
       <ul>
         <li ng-repeat="todo in home.todos">
           <span ng-class="{strike: todo.completed}" ng-click="home.toggle(todo)">{{todo.task}}</span>
