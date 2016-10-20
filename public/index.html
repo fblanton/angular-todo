@@ -14,6 +14,7 @@
       <form ng-submit="home.post()">
         <input type="text" ng-model="home.newTodo.task">
       </form>
+      <span ng-show="!!home.error"><h5>{{home.error}}</h5></span>
       <ul>
         <li ng-repeat="todo in home.todos">
           <span ng-class="{strike: todo.completed}" ng-click="home.toggle(todo)">{{todo.task}}</span>

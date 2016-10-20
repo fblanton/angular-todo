@@ -24,6 +24,17 @@ module.exports = db => {
       .catch(next)
   })
 
+  router.put('/:id', (req, res, next) => {
+    const id = { _id: ObjectId(req.params.id) }
+    todos
+      .updateOne(id, { $set: req.body })
+      .then( () => todos.find(id).toArray()
+        .then(list => res.json(list[0]))
+        .catch(next)
+      )
+      .catch(next)
+  })
+
   return router
 }
 
