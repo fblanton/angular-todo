@@ -15,7 +15,6 @@ function HomeController($timeout, dataservice) {
   vm.remaining = remaining
   vm.todos = []
   vm.newTodo = { completed: false, task: '' }
-  vm.toggle = toggleTodo
   vm.create = create
   vm.error = '';
 
@@ -25,14 +24,6 @@ function HomeController($timeout, dataservice) {
     dataservice.readAll()
       .then(todos => vm.todos = todos)
       .catch(() => showError('Server Error: Unable to Load Todos.'))
-  }
-
-  function toggleTodo(todo) {
-    dataservice.updateOne(todo, { completed: !todo.completed })
-      .then(() => todo.completed = !todo.completed)
-      .catch(() => {
-        showError('Server Error: Unable to Toggle Todo.')
-      })
   }
 
   function showError(text) {
@@ -47,11 +38,49 @@ function HomeController($timeout, dataservice) {
   }
 
   function remaining() {
-    return (vm.todos)
-      ? vm.todos.filter(todo => !todo.completed).length
-      : null
+    return vm.todos.reduce((_, { completed }) => _+ Number(!completed), 0)
   }
 }
+
+angular
+  .module('todo')
+  .directive('todoItem', todoItem)
+
+function todoItem() {
+  return {
+    restrict: 'E',
+    scope: { todo: '=' },
+    template: template(),
+    controller: TodoItemController,
+    controllerAs: 'vm'
+  }
+
+  function template() {
+    return `
+    <span ng-class="{strike: todo.completed}" ng-click="vm.toggle(todo)">
+      {{todo.task}}
+    </span>
+    `
+  }
+}
+
+angular
+  .module('todo')
+  .controller('TodoItemController', TodoItemController)
+
+TodoItemController.$inject = ['dataservice']
+
+function TodoItemController(dataservice) {
+  vm = this
+  vm.toggle = toggleTodo
+
+  function toggleTodo(todo) {
+    dataservice.updateOne(todo, { completed: !todo.completed })
+      .then(() => todo.completed = !todo.completed)
+  }
+}
+
+
 
 angular
   .module('todo')
