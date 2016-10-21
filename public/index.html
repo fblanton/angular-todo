@@ -9,8 +9,8 @@
   </head>
   <body>
     <div ng-controller="HomeController as home">
-      <span ng-show="home.remaining()"><h1>{{home.message}}</h1></span>
-      <span ng-show="!home.remaining()"><h1>{{home.complete}}</h1></span>
+      <span ng-show="home.remaining"><h1>{{home.message}}</h1></span>
+      <span ng-show="!home.remaining"><h1>{{home.complete}}</h1></span>
       <form ng-submit="home.create(home.newTodo)">
         <input type="text" ng-model="home.newTodo.task">
       </form>
@@ -20,7 +20,7 @@
           <todo-item todo="todo"></todo-item>
         </li>
       </ul>
-      <span ng-show="home.remaining()"><h3>{{home.remaining()}} remaining</h3></span>
+      <span ng-show="home.remaining"><h3>{{home.remaining}} remaining</h3></span>
     </div>
   </body>
 </html>
