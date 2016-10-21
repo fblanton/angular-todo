@@ -5,14 +5,14 @@ angular
   .module('todo', [])
   .controller('HomeController', HomeController)
 
-HomeController.$inject = ['$timeout', 'dataservice']
+HomeController.$inject = ['$scope', '$timeout', 'dataservice']
 
-function HomeController($timeout, dataservice) {
+function HomeController($scope, $timeout, dataservice) {
   const vm = this
 
   vm.message = 'Get Doing It'
   vm.complete = 'DONE!'
-  vm.remaining = remaining
+  vm.remaining = 0
   vm.todos = []
   vm.newTodo = { completed: false, task: '' }
   vm.create = create
@@ -21,6 +21,7 @@ function HomeController($timeout, dataservice) {
   loadTodos()
 
   function loadTodos() {
+    $scope.$watch(getRemaining, result => vm.remaining = result )
     dataservice.readAll()
       .then(todos => vm.todos = todos)
       .catch(() => showError('Server Error: Unable to Load Todos.'))
@@ -37,8 +38,8 @@ function HomeController($timeout, dataservice) {
       .catch(() => showError('Server Error: Unable to Create Todo.'))
   }
 
-  function remaining() {
-    return vm.todos.reduce((_, { completed }) => _+ Number(!completed), 0)
+  function getRemaining() {
+    return vm.todos.reduce((_, { completed: __ }) => _+!__, 0)
   }
 }
 
